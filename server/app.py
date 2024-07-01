@@ -20,19 +20,35 @@ def index():
 
 @app.route('/bakeries')
 def bakeries():
-    return ''
+    # Query all bakeries from the database
+    bakeries = Bakery.query.all()
+    # Serialize the data using a list comprehension
+    bakeries_json = [bakery.to_dict() for bakery in bakeries]
+    return make_response(jsonify(bakeries_json), 200)
 
 @app.route('/bakeries/<int:id>')
 def bakery_by_id(id):
-    return ''
+    # Query a single bakery by its ID
+    bakery = Bakery.query.get_or_404(id)
+    # Serialize the data, including nested baked goods
+    bakery_json = bakery.to_dict(nested=True)
+    return make_response(jsonify(bakery_json), 200)
 
 @app.route('/baked_goods/by_price')
 def baked_goods_by_price():
-    return ''
+    # Query baked goods sorted by price in descending order
+    baked_goods = BakedGood.query.order_by(BakedGood.price.desc()).all()
+    # Serialize the data using a list comprehension
+    baked_goods_json = [baked_good.to_dict() for baked_good in baked_goods]
+    return make_response(jsonify(baked_goods_json), 200)
 
 @app.route('/baked_goods/most_expensive')
 def most_expensive_baked_good():
-    return ''
+    # Query the most expensive baked good
+    baked_good = BakedGood.query.order_by(BakedGood.price.desc()).first()
+    # Serialize the data
+    baked_good_json = baked_good.to_dict()
+    return make_response(jsonify(baked_good_json), 200)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
